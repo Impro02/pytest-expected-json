@@ -71,7 +71,7 @@ def test_expected_data_returns_empty_dict_for_non_matching_nodeid() -> None:
     """Expected data falls back to an empty mapping when the node ID does not match."""
     request = SimpleNamespace(
         node=SimpleNamespace(
-            nodeid="package/module.py@test_example",
+            nodeid="package/module.py::test_example",
             originalname="test_example",
         ),
         config=SimpleNamespace(rootpath="."),
@@ -84,7 +84,7 @@ def test_expected_data_returns_empty_dict_for_non_python_nodeid() -> None:
     """Node IDs without a Python file suffix should return an empty mapping."""
     request = SimpleNamespace(
         node=SimpleNamespace(
-            nodeid="tests/tests_app/test_users.txt@test_get_user",
+            nodeid="tests/tests_app/test_users.txt::test_get_user",
             originalname="test_get_user",
         ),
         config=SimpleNamespace(rootpath="."),
@@ -97,7 +97,7 @@ def test_expected_data_returns_empty_dict_when_path_is_only_tests_prefix() -> No
     """A tests-only path should be trimmed to empty and return an empty mapping."""
     request = SimpleNamespace(
         node=SimpleNamespace(
-            nodeid="tests.py@test_example",
+            nodeid="tests.py::test_example",
             originalname="test_example",
         ),
         config=SimpleNamespace(rootpath="."),
@@ -120,7 +120,7 @@ def test_expected_data_loads_json_and_supports_parametrized_names(
 
     request = SimpleNamespace(
         node=SimpleNamespace(
-            nodeid="tests/tests_app/test_users.py@test_get_user",
+            nodeid="tests/tests_app/test_users.py::test_get_user",
             originalname="test_get_user",
         ),
         config=SimpleNamespace(rootpath=rootpath),
@@ -136,7 +136,7 @@ def test_expected_data_returns_empty_dict_when_file_is_missing(tmp_path: Path) -
     """Expected data should fall back to an empty mapping when the file is missing."""
     request = SimpleNamespace(
         node=SimpleNamespace(
-            nodeid="tests/tests_app/test_users.py@test_get_user",
+            nodeid="tests/tests_app/test_users.py::test_get_user",
             originalname="test_get_user",
         ),
         config=SimpleNamespace(rootpath=tmp_path),
@@ -157,7 +157,7 @@ def test_expected_data_loads_json_for_file_only_nodeid(tmp_path: Path) -> None:
 
     request = SimpleNamespace(
         node=SimpleNamespace(
-            nodeid="test_users.py@test_get_user",
+            nodeid="test_users.py::test_get_user",
             originalname="test_get_user",
         ),
         config=SimpleNamespace(rootpath=tmp_path),
@@ -180,7 +180,7 @@ def test_expected_data_loads_json_for_nested_module_path(tmp_path: Path) -> None
 
     request = SimpleNamespace(
         node=SimpleNamespace(
-            nodeid="tests/api/v1/test_users.py@test_get_user",
+            nodeid="tests/api/v1/test_users.py::test_get_user",
             originalname="test_get_user",
         ),
         config=SimpleNamespace(rootpath=tmp_path),
