@@ -80,6 +80,32 @@ def test_expected_data_returns_empty_dict_for_non_matching_nodeid() -> None:
     assert cast(Any, expected_data).__wrapped__(request, ExpectedJsonConfig()) == {}
 
 
+def test_expected_data_returns_empty_dict_for_non_python_nodeid() -> None:
+    """Node IDs without a Python file suffix should return an empty mapping."""
+    request = SimpleNamespace(
+        node=SimpleNamespace(
+            nodeid="tests/tests_app/test_users.txt::test_get_user",
+            originalname="test_get_user",
+        ),
+        config=SimpleNamespace(rootpath="."),
+    )
+
+    assert cast(Any, expected_data).__wrapped__(request, ExpectedJsonConfig()) == {}
+
+
+def test_expected_data_returns_empty_dict_when_path_is_only_tests_prefix() -> None:
+    """A tests-only path should be trimmed to empty and return an empty mapping."""
+    request = SimpleNamespace(
+        node=SimpleNamespace(
+            nodeid="tests.py::test_example",
+            originalname="test_example",
+        ),
+        config=SimpleNamespace(rootpath="."),
+    )
+
+    assert cast(Any, expected_data).__wrapped__(request, ExpectedJsonConfig()) == {}
+
+
 def test_expected_data_loads_json_and_supports_parametrized_names(
     tmp_path: Path,
 ) -> None:
@@ -89,7 +115,7 @@ def test_expected_data_loads_json_and_supports_parametrized_names(
     assets_dir.mkdir(parents=True)
 
     payload = {"name": "alice", "active": True}
-    file_path = assets_dir / "tests_app__test_users__test_get_user@case1.json"
+    file_path = assets_dir / "tests_app__test_users__test_get_user::case1.json"
     file_path.write_text(json.dumps(payload), encoding="utf-8")
 
     request = SimpleNamespace(

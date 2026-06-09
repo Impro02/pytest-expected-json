@@ -1,7 +1,6 @@
 """Pytest fixture for loading expected test data from JSON files."""
 
 import json
-import re
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
@@ -17,7 +16,7 @@ FixtureScope = Literal["function", "class", "module", "package", "session"]
 class ExpectedJsonConfig:
     """Configuration for the expected_data fixture."""
 
-    assets_dir: Path = Path("tests") / "assets" / "saved"
+    assets_dir: Path = Path("assets")
 
 
 def create_expected_json_config_fixture(
@@ -70,17 +69,21 @@ def expected_data(
     """
     config = expected_json_config
 
-    # Extract module and test name from node id
-    match = re.search(r"([^/]+)/([^/]+)\.py", request.node.nodeid)
-
-    if match is None:
+    # Build filename from node id path, flattening path segments with "__".
+    node_id_path = request.node.nodeid.split("::", 1)[0]
+    if not node_id_path.endswith(".py"):
         return {}
 
-    module_name = match.group(1)
-    test_file = match.group(2)
-    test_name = request.node.originalname
+    module_path = node_id_path[:-3]
+    path_parts = [part for part in module_path.split("/") if part]
+    if path_parts and path_parts[0] == "tests":
+        path_parts = path_parts[1:]
 
-    file_name = f"{module_name}__{test_file}__{test_name}"
+    if not path_parts:
+        return {}
+
+    test_name = request.node.originalname
+    file_name = "__".join([*path_parts, test_name])
 
     # Add parametrize id if present
     if hasattr(request, "param"):
