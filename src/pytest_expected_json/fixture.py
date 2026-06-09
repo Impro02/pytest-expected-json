@@ -54,7 +54,7 @@ def expected_data(
         {module_name}__{test_name}__{original_name}[@{param}].json
 
     Example:
-        For test `test_health.py::test_get_health`, the fixture looks for:
+        For test `test_health.py@test_get_health`, the fixture looks for:
         tests/assets/saved/tests_app__test_health__test_get_health.json
 
     Args:
@@ -70,7 +70,7 @@ def expected_data(
     config = expected_json_config
 
     # Build filename from node id path, flattening path segments with "__".
-    node_id_path = request.node.nodeid.split("::", 1)[0]
+    node_id_path = request.node.nodeid.split("@", 1)[0]
     if not node_id_path.endswith(".py"):
         return {}
 
@@ -87,7 +87,7 @@ def expected_data(
 
     # Add parametrize id if present
     if hasattr(request, "param"):
-        file_name += f"::{request.param}"
+        file_name += f"@{request.param}"
 
     # Get the tests directory
     file_path = request.config.rootpath / config.assets_dir / f"{file_name}.json"
