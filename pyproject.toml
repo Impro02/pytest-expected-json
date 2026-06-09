@@ -1,0 +1,121 @@
+
+[project]
+name = "pytest-expected-json"
+description = "A reusable pytest fixture for loading expected test data from JSON files"
+readme = "README.md"
+requires-python = ">=3.11,<3.15"
+license = {text = "MIT"}
+authors = [
+    {name = "Maxime MARTIN"}
+]
+keywords = ["pytest", "fixture", "testing", "json"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Framework :: Pytest",
+]
+dependencies = [
+    "pytest>=7.0",
+]
+dynamic = ["version"]
+
+[dependency-groups]
+dev = [
+    "mypy>=1.15.0,<2",
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "ruff>=0.11.0,<0.12",
+]
+setup = [
+    "hatch>=1.9.0,<2.0.0",
+    "hatch-vcs>=0.4.0,<0.5.0",
+    "hatchling>=1.21.0,<2.0.0",
+]
+
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[project.entry-points.pytest11]
+pytest_expected_json = "pytest_expected_json.plugin"
+
+[tool.uv]
+default-groups = [
+    "dev",
+    "setup",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pytest_expected_json"]
+
+[tool.hatch.build.targets.sdist]
+packages = ["src/pytest_expected_json"]
+
+[tool.hatch.version]
+source = "vcs"
+fallback-version = "0.0.0+unknown"
+
+[tool.hatch.version.patterns.my_pattern]
+pattern = "^(?P<base>\\d+\\.\\d+\\.\\d+)(-?((?P<stage>[a-zA-Z]+)\\.?(?P<revision>\\d+)?))?"
+format-jinja = """
+    {%- if distance == 0 -%}
+        {{ serialize_pep440(base, stage, revision) }}
+    {%- elif revision is not none -%}
+        {{ serialize_pep440(base, stage, revision + 1, dev=distance, metadata=[commit]) }}
+    {%- else -%}
+        {{ serialize_pep440(bump_version(base), stage, revision, dev=distance, metadata=[commit]) }}
+    {%- endif -%}
+"""
+
+[tool.ruff]
+target-version = "py312"
+# Same as Black.
+line-length = 88
+indent-width = 4
+
+[tool.ruff.lint]
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "F",      # Pyflakes
+    "I",      # isort
+    "B",      # flake8-bugbear
+    "C4",     # flake8-comprehensions
+    "UP",     # pyupgrade
+    "ARG",    # flake8-unused-arguments
+    "SIM",    # flake8-simplify
+    "PTH",    # flake8-use-pathlib
+    "ERA",    # eradicate (commented code)
+    "RUF",    # Ruff-specific rules
+    "D",      # pydocstyle (docstring checks)
+]
+ignore = [
+    "D203",   # One-blank-line-before-class (incompatible with D211)
+    "D212",   # Multi-line docstring summary should start at the first line (using D213 instead)
+]
+extend-select = [
+    "D213",  # Multi-line docstring summary should start at the second line
+]
+fixable = ["ALL"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+exclude = ["build"]
+mypy_path = ["src"]
+
+[tool.pytest.ini_options]
+addopts = "--cov-branch"
+testpaths = ["tests"]
+
+[tool.coverage.run]
+branch = true
+omit = [
+    "tests/**",
+]
