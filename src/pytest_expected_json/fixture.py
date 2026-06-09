@@ -70,7 +70,10 @@ def expected_data(
     config = expected_json_config
 
     # Build filename from node id path, flattening path segments with "__".
-    node_id_path = request.node.nodeid.split("@", 1)[0]
+    # Pytest node IDs are typically like:
+    # ../tests/test_<module>.py::test_<function>[param-id]
+    # Keep only the file path segment before "::".
+    node_id_path = request.node.nodeid.split("::", 1)[0]
     if not node_id_path.endswith(".py"):
         return {}
 
