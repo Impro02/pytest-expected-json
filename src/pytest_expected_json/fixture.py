@@ -14,9 +14,18 @@ FixtureScope = Literal["function", "class", "module", "package", "session"]
 
 @dataclass
 class ExpectedJsonConfig:
-    """Configuration for the expected_data fixture."""
+    """
+    Configuration for the expected_data fixture.
+
+    Attributes:
+        assets_dir (str): Base path of the assets directory.
+        fail_if_missing (bool): Fail when an asset is missing. Otherwise return an
+            empty json object, e.g {}. Default to False.
+
+    """
 
     assets_dir: Path = Path("assets")
+    fail_if_missing: bool = False
 
 
 def create_expected_json_config_fixture(
@@ -102,4 +111,6 @@ def expected_data(
         with file_path.open(encoding="utf-8") as f:
             return cast(JsonType, json.load(f))
     except (FileNotFoundError, FileExistsError):
+        if expected_json_config.fail_if_missing:
+            raise
         return {}
