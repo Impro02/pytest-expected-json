@@ -137,11 +137,7 @@ def test_expected_data_loads_json_and_supports_parametrized_names(
 def test_expected_data_returns_empty_dict_when_file_is_missing_and_failure_disabled(
     tmp_path: Path,
 ) -> None:
-    """
-    Expected data should fall back to an empty mapping when the file is missing.
-
-    if fail_if_missing is disabled.
-    """
+    """Expected data should fall back to an empty mapping when the file is missing."""
     request = SimpleNamespace(
         node=SimpleNamespace(
             nodeid="tests/tests_app/test_users.py::test_get_user",
@@ -161,7 +157,7 @@ def test_expected_data_returns_empty_dict_when_file_is_missing_and_failure_disab
 def test_expected_data_raises_when_file_is_missing_and_failure_enabled(
     tmp_path: Path,
 ) -> None:
-    """Expected data should fall back to an empty mapping when the file is missing."""
+    """Expected data should fail when the file is missing if failure mode enabled."""
     request = SimpleNamespace(
         node=SimpleNamespace(
             nodeid="tests/tests_app/test_users.py::test_get_user",
