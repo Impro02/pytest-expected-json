@@ -110,7 +110,7 @@ def expected_data(
 
         with file_path.open(encoding="utf-8") as f:
             return cast(JsonType, json.load(f))
-    except (FileNotFoundError, FileExistsError):
+    except FileNotFoundError:
         if expected_json_config.fail_if_missing:
             raise
         return {}
