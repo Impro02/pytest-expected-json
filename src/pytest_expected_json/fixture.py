@@ -18,9 +18,9 @@ class ExpectedJsonConfig:
     Configuration for the expected_data fixture.
 
     Attributes:
-        assets_dir (str): Base path of the assets directory.
-        fail_if_missing (bool): Fail when an asset is missing. Otherwise return an
-            empty json object, e.g {}. Default to False.
+        assets_dir (Path): Base path of the assets directory.
+        fail_if_missing (bool):  When True, raise FileNotFoundError if an asset is
+             missing. When False, return an empty JSON object ({}). Defaults to False.
 
     """
 
