@@ -1,12 +1,12 @@
 """Tests for fixture configuration primitives."""
 
-import pytest
-
 import importlib
 import json
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any, cast
+
+import pytest
 
 import pytest_expected_json
 import pytest_expected_json.fixture as fixture_module
