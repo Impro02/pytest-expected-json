@@ -6,6 +6,8 @@ from pathlib import Path
 from types import SimpleNamespace
 from typing import Any, cast
 
+import pytest
+
 import pytest_expected_json
 import pytest_expected_json.fixture as fixture_module
 import pytest_expected_json.plugin as plugin_module
@@ -132,7 +134,9 @@ def test_expected_data_loads_json_and_supports_parametrized_names(
     )
 
 
-def test_expected_data_returns_empty_dict_when_file_is_missing(tmp_path: Path) -> None:
+def test_expected_data_returns_empty_dict_when_file_is_missing_and_failure_disabled(
+    tmp_path: Path,
+) -> None:
     """Expected data should fall back to an empty mapping when the file is missing."""
     request = SimpleNamespace(
         node=SimpleNamespace(
@@ -142,7 +146,30 @@ def test_expected_data_returns_empty_dict_when_file_is_missing(tmp_path: Path) -
         config=SimpleNamespace(rootpath=tmp_path),
     )
 
-    assert cast(Any, expected_data).__wrapped__(request, ExpectedJsonConfig()) == {}
+    assert (
+        cast(Any, expected_data).__wrapped__(
+            request, ExpectedJsonConfig(fail_if_missing=False)
+        )
+        == {}
+    )
+
+
+def test_expected_data_raises_when_file_is_missing_and_failure_enabled(
+    tmp_path: Path,
+) -> None:
+    """Expected data should fail when the file is missing if failure mode enabled."""
+    request = SimpleNamespace(
+        node=SimpleNamespace(
+            nodeid="tests/tests_app/test_users.py::test_get_user",
+            originalname="test_get_user",
+        ),
+        config=SimpleNamespace(rootpath=tmp_path),
+    )
+
+    with pytest.raises(FileNotFoundError):
+        cast(Any, expected_data).__wrapped__(
+            request, ExpectedJsonConfig(fail_if_missing=True)
+        )
 
 
 def test_expected_data_loads_json_for_file_only_nodeid(tmp_path: Path) -> None:
